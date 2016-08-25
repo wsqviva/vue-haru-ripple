@@ -32,11 +32,11 @@ let commonConfig = {
       }
     ]
   },
-  // need extract css ?
   vue: {
     autoprefixer: {
       browsers: ['last 2 versions']
-    }
+    },
+    stylus: ExtractTextPlugin.extract('css!stylus')
   }
 };
 
