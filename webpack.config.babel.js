@@ -36,8 +36,13 @@ let commonConfig = {
     autoprefixer: {
       browsers: ['last 2 versions']
     },
-    stylus: ExtractTextPlugin.extract('css!stylus')
-  }
+    loaders: {
+      stylus: ExtractTextPlugin.extract('css!stylus')
+    }
+  },
+  plugins: [
+    new ExtractTextPlugin("[name].css"),
+  ]
 };
 
 let config;
