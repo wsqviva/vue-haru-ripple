@@ -11,24 +11,14 @@
 
 <script>
 import Vue from 'vue';
-import rippleWave from './rippleWave'
+import rippleWave from './rippleWave';
 
 let vueUtil = Vue.util;
 let max = Math.max;
 let sqrt = Math.sqrt;
 let ceil = Math.ceil;
 
-function ElementMetrics(element) {
-  var boundingRect = this.boundingRect = element.getBoundingClientRect();
-
-  this.element = element;
-}
-
-ElementMetrics.prototype = {
-  distance: function(x1, y1, x2, y2) {
-    return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-  }
-};
+const INITIAL_SCALE = 0.0001;
 
 export default {
   name: 'vue-haru-ripple',
@@ -37,8 +27,9 @@ export default {
 
   ready() {
     vueUtil.on(this.$el, 'mousedown', vueUtil.bind(this.downAction, this), false);
-    
-    this.metrics = new ElementMetrics(this.$el);
+    vueUtil.on(this.$el, 'mouseup', vueUtil.bind(this.upAction, this), false);
+
+    this.boundingRect = this.$el.getBoundingClientRect();
   },
 
   props: {
@@ -66,39 +57,55 @@ export default {
   },
 
   methods: {
-    downAction(event) {
-      let self = this;
-      // ripple related params
-      let ripple = {
-        x: event.clientX,
-        y: event.clientY,
-        metrics: this.metrics
-      };
 
+    upAction(event) {
+
+    },
+
+    downAction(event) {
+      let boundingRect = this.boundingRect;
+
+      // mousedown or touchdown x, y
+      let downX = event.clientX;
+      let downY = event.clientY; 
+
+      let rippleX = downX - this.boundingRect.left;
+      let rippleY = downY - this.boundingRect.top;
+
+      // ripple max diameter
+      let rippleSize = sqrt(boundingRect.width * boundingRect.width + boundingRect.height * boundingRect.height) * 2 + 2;
+      let rippleTranslate = `translate(-50%, -50%) translate(${rippleX}px, ${rippleY}px)`;
+
+      let ripple = {
+        rippleSize: rippleSize,
+        rippleTranslate: rippleTranslate,
+        color: this.color
+      };
+      
       this.waveBgStyle = {
         backgroundColor: this.color,
         opacity: this.initialOpacity
       };
-      
+
       this.ripples.push(ripple);
     },
 
     vanish(index) {
-      let list = this.ripples;
-      let i;
-      let k;
-      let len = list.length;
-      for (i = index, k = i + 1; k < len; i += 1, k += 1) {
-        list[i] = list[k];
-      }
-      list.pop();
+      // let list = this.ripples;
+      // let i;
+      // let k;
+      // let len = list.length;
+      // for (i = index, k = i + 1; k < len; i += 1, k += 1) {
+      //   list[i] = list[k];
+      // }
+      // list.pop();
 
-      if (!list.length) {
-        this.waveBgStyle = {
-          backgroundColor: '',
-          opacity: ''
-        };
-      }
+      // if (!list.length) {
+      //   this.waveBgStyle = {
+      //     backgroundColor: '',
+      //     opacity: ''
+      //   };
+      // }
     }
   }
 };

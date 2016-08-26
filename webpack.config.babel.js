@@ -3,7 +3,6 @@ import path from 'path';
 import webpack from 'webpack';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import merge from 'webpack-merge';
-import validate from 'webpack-validator';
 
 const PATHS = {
   index: path.join(__dirname, 'src', 'ripple.vue'),
@@ -31,14 +30,6 @@ let commonConfig = {
         include: PATHS.src
       }
     ]
-  },
-  vue: {
-    autoprefixer: {
-      browsers: ['last 2 versions']
-    },
-    loaders: {
-      stylus: ExtractTextPlugin.extract('css!stylus')
-    }
   },
   plugins: [
     new ExtractTextPlugin("[name].css"),
@@ -81,6 +72,14 @@ switch(process.env.npm_lifecycle_event) {
           filename: '[name].js',
           library: 'VueHaruRipple',
           libraryTarget: 'umd'
+        },
+        vue: {
+          autoprefixer: {
+            browsers: ['last 2 versions']
+          },
+          loaders: {
+            stylus: ExtractTextPlugin.extract('css!stylus')
+          }
         },
         devtool: 'source-map',
         externals: {
