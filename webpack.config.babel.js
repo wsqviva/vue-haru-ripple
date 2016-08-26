@@ -87,7 +87,7 @@ switch(process.env.npm_lifecycle_event) {
         }
       }
     )
-  break;
+    break;
 }
 
 export default config;
