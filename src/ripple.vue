@@ -109,7 +109,7 @@
           this.waveClass.animating = false;
 
           this.waveStyle = {
-            opacity: INITIAL_OPACITY,
+            opacity: this.initialOpacity,
             backgroundColor: this.color,
             width: `${rippleSize}px`,
             height: `${rippleSize}px`,
