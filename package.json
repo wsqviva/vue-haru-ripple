@@ -9,6 +9,19 @@
     "unit": "karma start test/unit/karma.conf.js",
     "build": "webpack --progress --hide-modules"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wsqviva/vue-haru-ripple.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wsqviva/vue-haru-ripple/issues"
+  },
+  "keywords": [
+    "vue",
+    "vuejs",
+    "ripple",
+    "vue-haru-ripple"
+  ],
   "dependencies": {
     "vue": "^1.0.0"
   },
@@ -24,6 +37,7 @@
     "chai": "^3.5.0",
     "css-loader": "^0.23.1",
     "extract-text-webpack-plugin": "^1.0.1",
+    "function-bind": "^1.1.0",
     "karma": "^1.2.0",
     "karma-babel-preprocessor": "^6.0.1",
     "karma-chai": "^0.1.0",
@@ -43,5 +57,6 @@
     "webpack": "^1.13.2",
     "webpack-dev-server": "^1.15.0",
     "webpack-merge": "^0.14.1"
-  }
+  },
+  "license": "MIT"
 }

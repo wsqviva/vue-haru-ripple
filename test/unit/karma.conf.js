@@ -43,8 +43,8 @@ module.exports = function(config) {
     webpack: webpackConfig,
 
     webpackMiddleware: {
-      stats: 'errors-only'
-      // noInfo: true
+      stats: 'errors-only',
+      noInfo: true
     },
 
     // test results reporter to use
@@ -74,7 +74,7 @@ module.exports = function(config) {
       require('karma-sourcemap-loader'),
       //require('karma-chrome-launcher'),
       require('karma-phantomjs-launcher'),
-      require('karma-babel-preprocessor')
+      require('karma-babel-preprocessor'),
       // require("karma-spec-reporter")
       //require("karma-chai-spies")
       //require("karma-vue-component")
