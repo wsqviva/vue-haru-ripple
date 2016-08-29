@@ -1,11 +1,12 @@
 {
   "name": "vue-haru-ripple",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "src/ripple.vue",
   "description": "vue ripple",
   "author": "wsqviva <wsq19850829@gmail.com>",
   "scripts": {
     "dev": "webpack-dev-server --config webpack.config.babel.js --inline --hot",
+    "unit": "karma start test/unit/karma.conf.js",
     "build": "webpack --progress --hide-modules"
   },
   "dependencies": {
@@ -20,8 +21,18 @@
     "babel-register": "^6.11.6",
     "babel-runtime": "^6.11.6",
     "better-raf": "0.0.1",
+    "chai": "^3.5.0",
     "css-loader": "^0.23.1",
     "extract-text-webpack-plugin": "^1.0.1",
+    "karma": "^1.2.0",
+    "karma-babel-preprocessor": "^6.0.1",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-mocha": "^1.1.1",
+    "karma-phantomjs-launcher": "^1.0.1",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^1.8.0",
+    "mocha": "^3.0.2",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.3.1",
     "vue": "^1.0.26",
