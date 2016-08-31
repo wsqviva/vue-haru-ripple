@@ -6,10 +6,18 @@
     <title>vue-haru-ripple example</title>
     <style>
     * { margin:0; padding:0; }
-    ul {
-      width: 300px;
+    body {
+      background-color: #f9f9f9;
+    }
+    
+    .container {
+      margin-top: 100px;
       margin-left: 100px;
-      margin-top: 200px;
+    }
+
+    ul {
+      float: left;
+      width: 300px;
     }
 
     li {
@@ -27,67 +35,92 @@
       height: 50px;
       line-height: 50px;
       padding: 0 20px;
-      background-color: #ddd;
+      color: #646464;
+      background-color: #fff;
     }
 
     .text1 {
       color: orange;
     }
+
+    .card {
+      float: left;
+      width: 300px;
+      height: 200px;
+      margin-left: 100px;
+      background-color: #fff;
+      box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24);
+    }
+
+    .card.image {
+      background: url(http://lorempixel.com/300/240/nature/) no-repeat;
+    }
     </style>
   </head>
   <body>
-    <ul>
-      <li>
-        <vue-haru-ripple class="ripple" color="skyblue" opacity="0.8">
-          <div class="text">
-            <span>真三国无双v3.9d 诸葛神装</span>
-          </div>
+    <div class="container">
+      <ul>
+        <li>
+          <vue-haru-ripple class="ripple" color="skyblue" opacity="0.8">
+            <div class="text">
+              <span>真三国无双v3.9d 诸葛神装</span>
+            </div>
+          </vue-haru-ripple>
+        </li>
+        <li>
+          <vue-haru-ripple class="ripple" opacity="0.5">
+            <div class="text text1">
+              <span>羊刀</span>
+            </div>
+          </vue-haru-ripple>
+        </li>
+        <li>
+          <vue-haru-ripple class="ripple" color="yellow" opacity="0.7">
+            <div class="text">
+              <span>玄武</span>
+            </div>
+          </vue-haru-ripple>
+        </li>
+        <li>
+          <vue-haru-ripple class="ripple" color="green" opacity="0.9">
+            <div class="text">
+              <span>孙子兵法</span>
+            </div>
+          </vue-haru-ripple>
+        </li>
+        <li>
+          <vue-haru-ripple class="ripple" color="purple">
+            <div class="text">
+              <span>翔靴</span>
+            </div>
+          </vue-haru-ripple>
+        </li>
+        <li>
+          <vue-haru-ripple class="ripple" color="gray">
+            <div class="text">
+              <span>大地斧</span>
+            </div>
+          </vue-haru-ripple>
+        </li>
+        <li>
+          <vue-haru-ripple class="ripple" color="salmon">
+            <div class="text">
+              <span>铠甲</span>
+            </div>
+          </vue-haru-ripple>
+        </li>
+      </ul>
+      
+      <div class="card">
+        <vue-haru-ripple class="ripple" :color="randomColor" opacity="0.3">    
         </vue-haru-ripple>
-      </li>
-      <li>
-        <vue-haru-ripple class="ripple" opacity="0.5">
-          <div class="text text1">
-            <span>羊刀</span>
-          </div>
+      </div>
+
+      <div class="card image">
+        <vue-haru-ripple class="ripple" :color="randomColor" opacity="0.3">    
         </vue-haru-ripple>
-      </li>
-      <li>
-        <vue-haru-ripple class="ripple" color="yellow" opacity="0.7">
-          <div class="text">
-            <span>玄武</span>
-          </div>
-        </vue-haru-ripple>
-      </li>
-      <li>
-        <vue-haru-ripple class="ripple" color="green" opacity="0.9">
-          <div class="text">
-            <span>孙子兵法</span>
-          </div>
-        </vue-haru-ripple>
-      </li>
-      <li>
-        <vue-haru-ripple class="ripple" color="purple">
-          <div class="text">
-            <span>翔靴</span>
-          </div>
-        </vue-haru-ripple>
-      </li>
-      <li>
-        <vue-haru-ripple class="ripple" color="gray">
-          <div class="text">
-            <span>大地斧</span>
-          </div>
-        </vue-haru-ripple>
-      </li>
-      <li>
-        <vue-haru-ripple class="ripple" color="salmon">
-          <div class="text">
-            <span>铠甲</span>
-          </div>
-        </vue-haru-ripple>
-      </li>
-    </ul>
-    
+      </div>
+    </div>  
     <script src="/example/index.js"></script>
   </body>
 </html>
