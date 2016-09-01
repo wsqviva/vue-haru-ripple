@@ -5,7 +5,7 @@
 
 ## Install
 ```
-  npm install vue-haru-ripple --save 
+$ npm install vue-haru-ripple --save 
 ```
 
 ## Usage
