@@ -5,7 +5,7 @@
   "description": "vue ripple",
   "author": "wsqviva <wsq19850829@gmail.com>",
   "scripts": {
-    "dev": "webpack-dev-server --config webpack.config.babel.js --inline --hot",
+    "dev": "webpack-dev-server --config webpack.config.babel.js --host 0.0.0.0 --inline --hot",
     "unit": "karma start test/unit/karma.conf.js",
     "build": "webpack --progress --hide-modules"
   },

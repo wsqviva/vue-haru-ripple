@@ -13,6 +13,7 @@
   let raf = Raf();
   let vueUtil = Vue.util;
   let sqrt = Math.sqrt;
+  let round = Math.round;
   const INITIAL_SCALE = 0.001;
   const FINAL_SCALE = 1;
   // used to handle downActions triggered within one animation frame time
@@ -21,15 +22,16 @@
     name: 'vue-haru-ripple',
 
     ready() {
-      // TODO: add touchstart touchend touchcancel
       vueUtil.on(this.$el, 'mousedown', vueUtil.bind(this.downAction, this), false);
+      vueUtil.on(this.$el, 'touchstart', vueUtil.bind(this.downAction, this), false);
       vueUtil.on(this.$el, 'mouseup', vueUtil.bind(this.upAction, this), false);
       vueUtil.on(this.$el, 'mouseleave', vueUtil.bind(this.upAction, this), false);
       vueUtil.on(this.$el, 'blur', vueUtil.bind(this.upAction, this), false);
+      vueUtil.on(this.$el, 'touchend', vueUtil.bind(this.upAction, this), false);
 
       this._frameCount = 0;
       let boundingRect = this._boundingRect = this.$el.getBoundingClientRect();
-      this._rippleSize = sqrt(boundingRect.width * boundingRect.width + boundingRect.height * boundingRect.height) * 2 + 2;
+      this._rippleSize = round(sqrt(boundingRect.width * boundingRect.width + boundingRect.height * boundingRect.height) * 2) + 2;
 
       // not pass color prop
       if (!this.color) {
@@ -106,22 +108,34 @@
         this.showWave = true;
       },
 
-      upAction() {
+      upAction(event) {
+        if (event.type === 'touchend' || event.type === 'touchcancel') {
+          event.preventDefault();
+        }
         this.waveStyle.opacity = 0;
       },
 
       downAction(event) {
-        // 讲真, 你我的手速做不到 - -
         if (!this.frameCountCheck()) {
           return;
         }
 
+        if (event.type === 'mousedown') {
+          // only left mouse button
+          if (event.button !== 0) {
+            return;
+          }
+        }
+
         let boundingRect = this._boundingRect;
+
         // mousedown or touchstart x, y
-        let downX = event.clientX;
-        let downY = event.clientY;
-        let rippleX = downX - boundingRect.left;
-        let rippleY = downY - boundingRect.top;
+        let downX = event.touches ? event.touches[0].pageX : event.clientX;
+        let downY = event.touches ? event.touches[0].pageY : event.clientX;
+
+        let rippleX = round(downX - boundingRect.left);
+        let rippleY = round(downY - boundingRect.top);
+
         // ripple max diameter
         let rippleTranslate = this._rippleTranslate = `translate(-50%, -50%) translate(${rippleX}px, ${rippleY}px)`;
         let rippleSize = this._rippleSize;
@@ -161,5 +175,5 @@
       border-radius: 50%
 
     .animating.spread-transition
-      transition: transform .6s cubic-bezier(0, 0, 0.2, 1), opacity .6s cubic-bezier(0, 0, 0.2, 1)
+      transition: transform 0.3s cubic-bezier(0, 0, 0.2, 1), opacity 0.6s cubic-bezier(0, 0, 0.2, 1)
 </style>
