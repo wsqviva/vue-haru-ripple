@@ -131,7 +131,7 @@
 
         // mousedown or touchstart x, y
         let downX = event.touches ? event.touches[0].pageX : event.clientX;
-        let downY = event.touches ? event.touches[0].pageY : event.clientX;
+        let downY = event.touches ? event.touches[0].pageY : event.clientY;
 
         let rippleX = round(downX - boundingRect.left);
         let rippleY = round(downY - boundingRect.top);
