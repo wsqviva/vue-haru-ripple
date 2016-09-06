@@ -32,7 +32,7 @@ let commonConfig = {
     ]
   },
   plugins: [
-    new ExtractTextPlugin("[name].css"),
+    new ExtractTextPlugin("ripple.css"),
   ]
 };
 
@@ -69,7 +69,7 @@ switch(process.env.npm_lifecycle_event) {
         },
         output: {
           path: PATHS.dist,
-          filename: '[name].js',
+          filename: 'ripple.js',
           library: 'VueHaruRipple',
           libraryTarget: 'umd'
         },
