@@ -9,6 +9,10 @@ $ npm install vue-haru-ripple --save
 ```
 
 ## Usage
-```javascript
-
+```html
+<vue-haru-ripple class="ripple">
+  <div>
+    <span>my ripple</span>
+  </div>
+</vue-haru-ripple>
 ```
