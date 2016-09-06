@@ -221,7 +221,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var boundingRect = this._boundingRect;
 	
 	      var downX = event.touches ? event.touches[0].pageX : event.clientX;
-	      var downY = event.touches ? event.touches[0].pageY : event.clientX;
+	      var downY = event.touches ? event.touches[0].pageY : event.clientY;
 	
 	      var rippleX = round(downX - boundingRect.left);
 	      var rippleY = round(downY - boundingRect.top);
