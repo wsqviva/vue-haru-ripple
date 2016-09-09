@@ -110,20 +110,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	var vueUtil = _vue2.default.util;
 	var sqrt = Math.sqrt;
 	var round = Math.round;
+	var SUPPORT_TOUCH = 'ontouchstart' in window;
 	var INITIAL_SCALE = 0.001;
 	var FINAL_SCALE = 1;
 	
 	var FRAME_CHECK_COUNT = 1;
+	
 	exports.default = {
 	  name: 'vue-haru-ripple',
 	
 	  ready: function ready() {
-	    vueUtil.on(this.$el, 'mousedown', vueUtil.bind(this.downAction, this), false);
-	    vueUtil.on(this.$el, 'touchstart', vueUtil.bind(this.downAction, this), false);
-	    vueUtil.on(this.$el, 'mouseup', vueUtil.bind(this.upAction, this), false);
-	    vueUtil.on(this.$el, 'mouseleave', vueUtil.bind(this.upAction, this), false);
-	    vueUtil.on(this.$el, 'blur', vueUtil.bind(this.upAction, this), false);
-	    vueUtil.on(this.$el, 'touchend', vueUtil.bind(this.upAction, this), false);
+	    this._boundDownAction = vueUtil.bind(this.downAction, this);
+	    this._boundUpAction = vueUtil.bind(this.upAction, this);
+	
+	    if (SUPPORT_TOUCH) {
+	      vueUtil.on(this.$el, 'touchstart', this._boundDownAction, false);
+	      vueUtil.on(this.$el, 'touchend', this._boundUpAction, false);
+	      vueUtil.on(this.$el, 'touchcancel', this._boundUpAction, false);
+	    } else {
+	      vueUtil.on(this.$el, 'mousedown', this._boundDownAction, false);
+	      vueUtil.on(this.$el, 'mouseup', this._boundUpAction, false);
+	    }
 	
 	    this._frameCount = 0;
 	    var boundingRect = this._boundingRect = this.$el.getBoundingClientRect();
@@ -200,10 +207,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.showWave = true;
 	    },
 	    upAction: function upAction(event) {
-	      if (event.type === 'touchend' || event.type === 'touchcancel') {
-	        event.preventDefault();
-	      }
+	      this.handleMouseUp(event);
 	      this.waveStyle.opacity = 0;
+	    },
+	    handleMouseUp: function handleMouseUp(event) {
+	      if (event.type.indexOf('mouse') === 0) {
+	        vueUtil.off(this.$el, 'mouseleave', this._boundUpAction, false);
+	      }
+	    },
+	    handleMouseDown: function handleMouseDown(event) {
+	      if (event.type === 'mousedown') {
+	        if (event.button !== 0) {
+	          return false;
+	        }
+	
+	        vueUtil.on(this.$el, 'mouseleave', this._boundUpAction, false);
+	      }
 	    },
 	    downAction: function downAction(event) {
 	      var _this2 = this;
@@ -211,13 +230,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (!this.frameCountCheck()) {
 	        return;
 	      }
-	
-	      if (event.type === 'mousedown') {
-	        if (event.button !== 0) {
-	          return;
-	        }
+	      if (this.handleMouseDown(event) === false) {
+	        return;
 	      }
-	
 	      var boundingRect = this._boundingRect;
 	
 	      var downX = event.touches ? event.touches[0].pageX : event.clientX;
