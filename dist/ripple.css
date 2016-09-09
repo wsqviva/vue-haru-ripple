@@ -12,7 +12,7 @@
   border-radius: 50%;
 }
 .haru-ripple .animating.spread-transition[_v-1da45bca] {
-  transition: transform 0.3s cubic-bezier(0, 0, 0.2, 1), opacity 0.6s cubic-bezier(0, 0, 0.2, 1);
+  transition: transform 0.6s cubic-bezier(0, 0, 0.2, 1), opacity 0.6s cubic-bezier(0, 0, 0.2, 1);
 }
 
 /*# sourceMappingURL=ripple.css.map*/
