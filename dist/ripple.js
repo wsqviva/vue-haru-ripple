@@ -191,6 +191,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	  },
 	
+	
 	  methods: {
 	    setWaveStyle: function setWaveStyle() {
 	      this.waveStyle.transform = this._rippleTranslate + ' scale(' + FINAL_SCALE + ', ' + FINAL_SCALE + ')';

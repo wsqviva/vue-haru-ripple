@@ -79,7 +79,7 @@
       }
     },
 
-    data: function () {
+    data() {
       return {
         showWave: false,
 
