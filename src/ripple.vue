@@ -144,7 +144,7 @@
         if (this.handleMouseDown(event) === false) {
           return
         }
-        let boundingRect = this._boundingRect
+        let boundingRect = this.$el.getBoundingClientRect()
 
         // mousedown or touchstart x, y
         let downX = event.touches ? event.touches[0].pageX : event.clientX
