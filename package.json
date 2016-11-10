@@ -24,7 +24,6 @@
     "vue-ripple"
   ],
   "dependencies": {
-    "better-raf": "0.0.1",
     "vue": "^2.0.5"
   },
   "devDependencies": {
