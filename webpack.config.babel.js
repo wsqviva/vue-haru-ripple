@@ -12,11 +12,11 @@ const PATHS = {
 
 let commonConfig = {
   resolve: {
-    extensions: ['', '.js', '.vue']
+    extensions: ['.js', '.vue']
   },
-  resolveLoader: {
-    root: path.join(__dirname, 'node_modules'),
-  },
+  // resolveLoader: {
+  //   modules: [path.join(__dirname, 'node_modules')]
+  // },
   module: {
     loaders: [
       {

@@ -1,79 +1,74 @@
 <template>
   <div class="haru-ripple">
-    <div v-el:content>
+    <div ref="content">
       <slot></slot>
     </div>
-    <div v-show="showWave" class="wave" :class="waveClass" :style="waveStyle" transition="spread"></div>
+    <transition name="spread" type="transition"
+      @before-enter="beforeEnter"
+      @enter="enter"
+      @after-enter="afterEnter"
+      @enter-cancelled="enterCancelled">
+      <div v-show="showWave" class="wave" :style="waveStyle" ref="ripple"></div>
+    </transition>
   </div>
 </template>
 
 <script>
   import Vue from 'vue'
-  import Raf from 'better-raf'
-  const raf = Raf()
-  const vueUtil = Vue.util
+  const { bind: utilBind } = Vue.util
+
   const sqrt = Math.sqrt
   const round = Math.round
+
   const SUPPORT_TOUCH = 'ontouchstart' in window
-  const INITIAL_SCALE = 0.001
-  const FINAL_SCALE = 1
+
+  // ripple init scale
+  const INITIAL_SCALE = 0.1
+  // ripple final scale
+  const FINAL_SCALE = ''
+
   // used to handle downActions triggered within one animation frame time
   const FRAME_CHECK_COUNT = 1
 
   export default {
     name: 'vue-haru-ripple',
 
-    ready() {
-      this._boundDownAction = vueUtil.bind(this.downAction, this)
-      this._boundUpAction = vueUtil.bind(this.upAction, this)
+    mounted() {
+      this._boundDownAction = utilBind(this.downAction, this)
+      this._boundUpAction = utilBind(this.upAction, this)
 
       if (SUPPORT_TOUCH) {
-        vueUtil.on(this.$el, 'touchstart', this._boundDownAction, false)
-        vueUtil.on(this.$el, 'touchend', this._boundUpAction, false)
-        vueUtil.on(this.$el, 'touchcancel', this._boundUpAction, false)
+        this.$el.addEventListener('touchstart', this._boundDownAction)
+        this.$el.addEventListener('touchend', this._boundUpAction)
+        this.$el.addEventListener('touchcancel', this._boundUpAction)
       } else {
-        vueUtil.on(this.$el, 'mousedown', this._boundDownAction, false)
-        vueUtil.on(this.$el, 'mouseup', this._boundUpAction, false)
+        this.$el.addEventListener('mousedown', this._boundDownAction)
+        this.$el.addEventListener('mouseup', this._boundUpAction)
       }
 
       this._frameCount = 0
+      // fixed rect
       let boundingRect = this._boundingRect = this.$el.getBoundingClientRect()
       this._rippleSize = round(sqrt(boundingRect.width * boundingRect.width + boundingRect.height * boundingRect.height) * 2) + 2
 
-      // not pass color prop
+      // have not pass color prop
       if (!this.color) {
-        let color = this.$els.content.firstElementChild && window.getComputedStyle(this.$els.content.firstElementChild).color
+        let color = this.$refs.content.firstElementChild && window.getComputedStyle(this.$els.content.firstElementChild).color
         this.color = color || '#fff'
       }
-    },
 
-    transitions: {
-      spread: {
-        beforeEnter() {
-          this.waveClass.animating = true
-        },
-
-        enter() {
-          this.$nextTick(() => {
-            this.setWaveStyle()
-          })
-        },
-
-        afterEnter() {
-          // leave, afterLeave hooks not bound
-          this.showWave = false
-          this.$emit('disappear')
-        }
-      }
+      this._shouldFade = false
+      this._couldVanish = false
     },
 
     props: {
-      // initial opacity
+      // ripple initial opacity
       opacity: {
         type: Number | String,
         default: 0.3
       },
-      // support rgba?
+      // ripple color, default is its color
+      // TODO: support rgba
       color: {
         type: String
       }
@@ -82,10 +77,6 @@
     data() {
       return {
         showWave: false,
-
-        waveClass: {
-          animating: false
-        },
 
         waveStyle: {
           backgroundColor: '',
@@ -98,8 +89,44 @@
     },
 
     methods: {
-      setWaveStyle() {
-        this.waveStyle.transform = `${this._rippleTranslate} scale(${FINAL_SCALE}, ${FINAL_SCALE})`
+      fadeVanish() {
+        if (this._shouldFade) {
+          this.$refs.ripple.style.opacity = 0
+        }
+
+        if (this._couldVaniash) {
+          this.showWave = false
+          this.$emit('vanish') 
+        }
+
+        this._shouldFade = !this._shouldFade
+        this._couldVanish = !this._couldVaniash
+      },
+
+      beforeEnter(el) {
+        // prev ripple should vanish immediately
+        el.classList.remove('animating')
+        el.style.opacity = this.opacity
+        el.style.transform = `${this._rippleTranslate} scale(${INITIAL_SCALE}, ${INITIAL_SCALE})`
+      },
+
+      // after the next two frames `spread-enter` class will be removed
+      enter(el) {
+        window.requestAnimationFrame(() => {
+          el.classList.add('animating')
+          el.style.transform = `${this._rippleTranslate}`
+        })
+      },
+
+      // leave, afterLeave hooks not bound
+      afterEnter(el) {
+        // 如果还没有up过就不能设为false
+        el.classList.remove('animating')
+        this.fadeVanish()
+      },
+
+      enterCancelled(el) {
+        el.style.transform = `${this._rippleTranslate} scale(${INITIAL_SCALE}, ${INITIAL_SCALE})`
       },
 
       frameCountCheck() {
@@ -115,14 +142,15 @@
         this.showWave = true
       },
 
+      // mouseup event in task queue trigger before raf animation frames
       upAction(event) {
+        this.fadeVanish()
         this.handleMouseUp(event)
-        this.waveStyle.opacity = 0
       },
 
       handleMouseUp(event) {
         if (event.type.indexOf('mouse') === 0) {
-          vueUtil.off(this.$el, 'mouseleave', this._boundUpAction, false)
+          this.$el.removeEventListener('mouseleave', this._boundUpAction)
         }
       },
 
@@ -132,8 +160,7 @@
           if (event.button !== 0) {
             return false
           }
-
-          vueUtil.on(this.$el, 'mouseleave', this._boundUpAction, false)
+          this.$el.addEventListener('mouseleave', this._boundUpAction)
         }
       },
 
@@ -141,14 +168,16 @@
         if (!this.frameCountCheck()) {
           return
         }
+
         if (this.handleMouseDown(event) === false) {
           return
         }
-        let boundingRect = this._boundingRect
 
-        // mousedown or touchstart x, y
-        let downX = event.touches ? event.touches[0].pageX : event.clientX
-        let downY = event.touches ? event.touches[0].pageY : event.clientY
+        const boundingRect = this._boundingRect
+
+        // decide 'mousedown' or 'touchstart' x, y
+        const downX = event.touches ? event.touches[0].pageX : event.clientX
+        const downY = event.touches ? event.touches[0].pageY : event.clientY
 
         let rippleX = round(downX - boundingRect.left)
         let rippleY = round(downY - boundingRect.top)
@@ -158,18 +187,14 @@
         let rippleSize = this._rippleSize
 
         this.showWave = false
-        // prev ripple vanish immediately, so need class 'animating'
-        this.waveClass.animating = false
+        
+        // this.waveStyle.opacity = this.opacity
+        this.waveStyle.backgroundColor = this.color
+        this.waveStyle.width = `${rippleSize}px`
+        this.waveStyle.height = `${rippleSize}px`
+        // this.waveStyle.transform = `${rippleTranslate} scale(${INITIAL_SCALE}, ${INITIAL_SCALE})`
 
-        this.waveStyle = {
-          opacity: this.opacity,
-          backgroundColor: this.color,
-          width: `${rippleSize}px`,
-          height: `${rippleSize}px`,
-          transform: `${rippleTranslate} scale(${INITIAL_SCALE}, ${INITIAL_SCALE})`
-        }
-
-        raf.requestAnimationFrame(() => {
+        Vue.nextTick(() => {
           this.animFrameHandler()
         })
       }
@@ -177,7 +202,7 @@
   }
 </script>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
   .haru-ripple
     position: relative
     overflow: hidden
@@ -191,6 +216,7 @@
       height: 100%
       border-radius: 50%
 
-    .animating.spread-transition
+    .animating.spread-enter-active
+      opacity: 0
       transition: transform 0.6s cubic-bezier(0, 0, 0.2, 1), opacity 0.6s cubic-bezier(0, 0, 0.2, 1)
 </style>
