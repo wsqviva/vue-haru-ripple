@@ -10,6 +10,14 @@ const PATHS = {
   src: path.join(__dirname, 'src')
 };
 
+let vueConfig = {
+  postcss: [
+    require('autoprefixer')({
+      browsers: ['last 3 versions']
+    })
+  ]
+}
+
 let commonConfig = {
   resolve: {
     extensions: ['.js', '.vue']
@@ -21,18 +29,26 @@ let commonConfig = {
     loaders: [
       {
         test: /\.js$/,
-        loader: 'babel',
+        loader: 'babel-loader',
         exclude: /node_modules|vue\/src|vue-router\/|vue-loader\/|vue-hot-reload-api\//
       },
       {
         test: /\.vue$/,
-        loader: 'vue',
-        include: PATHS.src
+        loader: 'vue-loader',
+        include: PATHS.src,
+        options: vueConfig
       }
+      // {
+      //   test: /\.styl$/,
+      //   loader: ExtractTextPlugin.extract({
+      //     loader: ['css-loader', 'stylus-loader']
+      //   })
+      //   include: PATHS.src
+      // }
     ]
   },
   plugins: [
-    new ExtractTextPlugin("ripple.css"),
+    new ExtractTextPlugin("ripple.css")
   ]
 };
 
@@ -61,6 +77,13 @@ switch(process.env.npm_lifecycle_event) {
     break;
 
   case 'build':
+    vueConfig.loaders = {
+      stylus: ExtractTextPlugin.extract({
+        loader: 'css-loader?sourceMap!stylus-loader',
+        fallbackLoader: 'vue-style-loader'
+      })
+    }
+    
     config = merge(
       commonConfig,
       {
@@ -72,14 +95,6 @@ switch(process.env.npm_lifecycle_event) {
           filename: 'ripple.js',
           library: 'VueHaruRipple',
           libraryTarget: 'umd'
-        },
-        vue: {
-          autoprefixer: {
-            browsers: ['last 2 versions']
-          },
-          loaders: {
-            stylus: ExtractTextPlugin.extract('css!stylus')
-          }
         },
         devtool: 'source-map',
         externals: {

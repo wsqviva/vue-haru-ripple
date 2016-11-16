@@ -217,6 +217,5 @@
       border-radius: 50%
 
     .animating.spread-enter-active
-      opacity: 0
       transition: transform 0.6s cubic-bezier(0, 0, 0.2, 1), opacity 0.6s cubic-bezier(0, 0, 0.2, 1)
 </style>
