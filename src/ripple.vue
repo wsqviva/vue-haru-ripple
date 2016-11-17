@@ -49,6 +49,7 @@
       this._frameCount = 0
       // fixed rect
       let boundingRect = this._boundingRect = this.$el.getBoundingClientRect()
+
       this._rippleSize = round(sqrt(boundingRect.width * boundingRect.width + boundingRect.height * boundingRect.height) * 2) + 2
 
       // have not pass color prop
@@ -120,6 +121,7 @@
 
       // leave, afterLeave hooks not bound
       afterEnter(el) {
+        console.timeEnd('abc')
         // 如果还没有up过就不能设为false
         el.classList.remove('animating')
         this.fadeVanish()
@@ -165,6 +167,7 @@
       },
 
       downAction(event) {
+        console.time('abc')
         if (!this.frameCountCheck()) {
           return
         }
