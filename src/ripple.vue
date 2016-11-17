@@ -53,7 +53,7 @@
 
       // have not pass color prop
       if (!this.color) {
-        let color = this.$refs.content.firstElementChild && window.getComputedStyle(this.$els.content.firstElementChild).color
+        let color = this.$refs.content.firstElementChild && window.getComputedStyle(this.$refs.content.firstElementChild).color
         this.color = color || '#fff'
       }
 
