@@ -5,7 +5,7 @@
   "description": "vue ripple",
   "author": "wsqviva <wsq19850829@gmail.com>",
   "scripts": {
-    "dev": "webpack-dev-server --config webpack.config.babel.js --host 0.0.0.0 --inline --hot",
+    "dev": "webpack-dev-server --config webpack.config.js --host 0.0.0.0 --inline --hot",
     "unit": "karma start test/unit/karma.conf.js",
     "build": "webpack --progress --hide-modules",
     "lint": "eslint --ext .js,.vue src"
@@ -34,7 +34,6 @@
     "babel-plugin-transform-vue-jsx": "^3.1.2",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-stage-2": "^6.18.0",
-    "babel-register": "^6.18.0",
     "babel-runtime": "^6.18.0",
     "chai": "^3.5.0",
     "css-loader": "^0.23.1",
@@ -58,7 +57,7 @@
     "vue-hot-reload-api": "^1.3.3",
     "vue-loader": "^9.9.5",
     "vue-style-loader": "^1.0.0",
-    "webpack": "^2.1.0-beta.25",
+    "webpack": "2.1.0-beta.27",
     "webpack-dev-server": "^2.1.0-beta.10",
     "webpack-merge": "^0.14.1"
   },

@@ -1,8 +1,8 @@
 
-import path from 'path';
-import webpack from 'webpack';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import merge from 'webpack-merge';
+const path = require('path')
+const webpack = require('webpack')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const merge = require('webpack-merge')
 
 const PATHS = {
   index: path.join(__dirname, 'src', 'ripple.vue'),
@@ -105,4 +105,4 @@ switch(process.env.npm_lifecycle_event) {
     break;
 }
 
-export default config;
+module.exports = config
