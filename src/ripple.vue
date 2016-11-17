@@ -121,7 +121,6 @@
 
       // leave, afterLeave hooks not bound
       afterEnter(el) {
-        console.timeEnd('abc')
         // 如果还没有up过就不能设为false
         el.classList.remove('animating')
         this.fadeVanish()
@@ -167,7 +166,6 @@
       },
 
       downAction(event) {
-        console.time('abc')
         if (!this.frameCountCheck()) {
           return
         }

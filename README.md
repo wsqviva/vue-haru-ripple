@@ -9,17 +9,9 @@
 [Live Demo](https://wsqviva.github.io/vue-haru-ripple/)
 
 ## Install
-intall via npm
-```
-$ npm install vue-haru-ripple --save 
-```
-
 install via yarn
 ```
 $ yarn add vue-haru-ripple
-
-$ cd node_modules/vue-haru-ripple
-$ yarn dev
 ```
 
 ## Usage
@@ -32,8 +24,8 @@ $ yarn dev
 ```
 
 ## TODO LIST
-- [] fix apparent bug
-- [] add directive
+- [ ] fix apparent bug
+- [ ] add directive
 
 ## Maintainer
 This handsome guy is not only the maintainer, but also the owner. 👻
