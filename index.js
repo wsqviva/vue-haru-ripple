@@ -1,5 +1,5 @@
 new Vue({
-  el: 'body',
+  el: '#wsqviva',
   components: { 
     'vue-haru-ripple': VueHaruRipple 
   },
