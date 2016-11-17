@@ -22,5 +22,12 @@ $ npm install vue-haru-ripple --save
 </vue-haru-ripple>
 ```
 
+## Owner
+This handsome guy is the owner
+
+| [![wsqviva](https://avatars2.githubusercontent.com/u/7554547?v=3&s=70)](https://github.com/wsqviva) |
+| --- |
+| [wsqviva](https://github.com/wsqviva) |
+
 ## License
 [MIT](https://en.wikipedia.org/wiki/MIT_License)
