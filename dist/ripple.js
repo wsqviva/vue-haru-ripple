@@ -143,7 +143,7 @@ exports.default = {
 
     // have not pass color prop
     if (!this.color) {
-      var color = this.$refs.content.firstElementChild && window.getComputedStyle(this.$els.content.firstElementChild).color;
+      var color = this.$refs.content.firstElementChild && window.getComputedStyle(this.$refs.content.firstElementChild).color;
       this.color = color || '#fff';
     }
 
