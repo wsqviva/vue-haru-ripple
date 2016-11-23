@@ -16,9 +16,22 @@
 
 <script>
   import Vue from 'vue'
-  import { SUPPORT_TOUCH, INITIAL_SCALE, FINAL_SCALE, TRANSFORM_DURATION, RIPPLE_STATE_INIT, RIPPLE_STATE_READY_TO_VANISH, RIPPLE_STATE_VANISH } from './constants'
-  import { transitionEndEvent, onceTransitionEnds, sqrt, ceil, furthestCornerDistanceFrom, addClass, removeClass } from './utils'
-
+  import { SUPPORT_TOUCH,
+           INITIAL_SCALE,
+           FINAL_SCALE,
+           TRANSFORM_DURATION,
+           RIPPLE_STATE_INIT,
+           RIPPLE_STATE_READY_TO_VANISH,
+           RIPPLE_STATE_VANISH
+         } from './constants'
+  import { transitionEndEvent,
+           onceTransitionEnds,
+           sqrt,
+           ceil,
+           furthestCornerDistanceFrom,
+           addClass,
+           removeClass
+         } from './utils'
   const { bind: utilBind } = Vue.util
 
   export default {
@@ -218,7 +231,7 @@
       width: 100%
       height: 100%
       border-radius: 50%
-    
+
     // cubic-bezier(0, 0, 0.2, 1)
     .animating.spread-enter-active
       transition: transform .8s cubic-bezier(.157, .72, .386, .987), opacity .6s linear
