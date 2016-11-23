@@ -3,11 +3,12 @@
     <div ref="content">
       <slot></slot>
     </div>
-    <transition name="spread" type="transition"
+    <transition name="spread"
       @before-enter="beforeEnter"
       @enter="enter"
       @after-enter="afterEnter"
-      @enter-cancelled="enterCancelled">
+      @enter-cancelled="enterCancelled"
+      @after-leave="afterLeave">
       <div v-show="showWave" class="wave" :style="waveStyle" ref="ripple"></div>
     </transition>
   </div>
@@ -15,20 +16,10 @@
 
 <script>
   import Vue from 'vue'
+  import { SUPPORT_TOUCH, INITIAL_SCALE, FINAL_SCALE, TRANSFORM_DURATION, RIPPLE_STATE_INIT, RIPPLE_STATE_READY_TO_VANISH, RIPPLE_STATE_VANISH } from './constants'
+  import { transitionEndEvent, onceTransitionEnds, sqrt, ceil, furthestCornerDistanceFrom, addClass, removeClass } from './utils'
+
   const { bind: utilBind } = Vue.util
-
-  const sqrt = Math.sqrt
-  const round = Math.round
-
-  const SUPPORT_TOUCH = 'ontouchstart' in window
-
-  // ripple init scale
-  const INITIAL_SCALE = 0.1
-  // ripple final scale
-  const FINAL_SCALE = ''
-
-  // used to handle downActions triggered within one animation frame time
-  const FRAME_CHECK_COUNT = 1
 
   export default {
     name: 'vue-haru-ripple',
@@ -37,6 +28,8 @@
       this._boundDownAction = utilBind(this.downAction, this)
       this._boundUpAction = utilBind(this.upAction, this)
 
+      // pointerdown, pointerup
+      // focus, blur
       if (SUPPORT_TOUCH) {
         this.$el.addEventListener('touchstart', this._boundDownAction)
         this.$el.addEventListener('touchend', this._boundUpAction)
@@ -46,11 +39,8 @@
         this.$el.addEventListener('mouseup', this._boundUpAction)
       }
 
-      this._frameCount = 0
-      // fixed rect
+      // el'rect
       let boundingRect = this._boundingRect = this.$el.getBoundingClientRect()
-
-      this._rippleSize = round(sqrt(boundingRect.width * boundingRect.width + boundingRect.height * boundingRect.height) * 2) + 2
 
       // have not pass color prop
       if (!this.color) {
@@ -58,8 +48,7 @@
         this.color = color || '#fff'
       }
 
-      this._shouldFade = false
-      this._couldVanish = false
+      this.waveStyle.backgroundColor = this.color
     },
 
     props: {
@@ -81,71 +70,82 @@
 
         waveStyle: {
           backgroundColor: '',
-          opacity: '',
+          opacity: this.opacity,
           width: '',
           height: '',
+          marginLeft: '',
+          marginTop: '',
           transform: ''
         }
       }
     },
 
     methods: {
-      fadeVanish() {
-        if (this._shouldFade) {
-          this.$refs.ripple.style.opacity = 0
+      _forwardState(el, hook) {
+        const rippleState = {
+          [RIPPLE_STATE_INIT]: RIPPLE_STATE_READY_TO_VANISH,
+          [RIPPLE_STATE_READY_TO_VANISH]: RIPPLE_STATE_VANISH,
+          [RIPPLE_STATE_VANISH]: RIPPLE_STATE_INIT
         }
 
-        if (this._couldVaniash) {
+        const currentRippleState = el.dataset.ripplestate
+
+        if (currentRippleState == RIPPLE_STATE_READY_TO_VANISH) {
           this.showWave = false
-          this.$emit('vanish') 
+          hook && hook()
         }
 
-        this._shouldFade = !this._shouldFade
-        this._couldVanish = !this._couldVaniash
+        el.dataset.ripplestate = rippleState[currentRippleState]
       },
 
+      // prev ripple should vanish immediately
+      // optimisticly remove
       beforeEnter(el) {
-        // prev ripple should vanish immediately
-        el.classList.remove('animating')
-        el.style.opacity = this.opacity
-        el.style.transform = `${this._rippleTranslate} scale(${INITIAL_SCALE}, ${INITIAL_SCALE})`
+        removeClass(el, 'animating')
+        Object.assign(el.style, { opacity: this.opacity, transform: `${this._rippleTranslate}${INITIAL_SCALE}` })
       },
 
-      // after the next two frames `spread-enter` class will be removed
-      enter(el) {
+      // after the subsequent two frames `spread-enter` class will be removed
+      enter(el, done) {
         window.requestAnimationFrame(() => {
-          el.classList.add('animating')
-          el.style.transform = `${this._rippleTranslate}`
+          addClass(el, 'animating')
+          Object.assign(el.style, { transform: `${this._rippleTranslate}` })
+          this._disposeTransHandler = onceTransitionEnds(el, 'transform', transitionEndEvent, TRANSFORM_DURATION, done)
         })
       },
 
-      // leave, afterLeave hooks not bound
       afterEnter(el) {
-        // 如果还没有up过就不能设为false
-        el.classList.remove('animating')
-        this.fadeVanish()
+        removeClass(el, 'animating')
+
+        this._forwardState(el)
+      },
+
+      afterLeave(el) {
+        if (this._upaction) {
+          removeClass(el, 'vanish')
+        }
       },
 
       enterCancelled(el) {
-        el.style.transform = `${this._rippleTranslate} scale(${INITIAL_SCALE}, ${INITIAL_SCALE})`
-      },
-
-      frameCountCheck() {
-        if (this._frameCount > 0) {
-          return false
-        }
-        this._frameCount = FRAME_CHECK_COUNT
-        return true
+        el.style.setProperty('transform', `${this._rippleTranslate}${INITIAL_SCALE})`)
       },
 
       animFrameHandler() {
-        this._frameCount--
         this.showWave = true
       },
 
-      // mouseup event in task queue trigger before raf animation frames
+      // mouseup event in task queue `should` trigger before raf animation frames
       upAction(event) {
-        this.fadeVanish()
+        let ripple = this.$refs.ripple
+
+        ripple.style.opacity = 0
+
+        this._upaction = false
+        this._forwardState(ripple, () => {
+          this._upaction = true
+          addClass(ripple, 'vanish')
+        })
+
         this.handleMouseUp(event)
       },
 
@@ -164,41 +164,42 @@
           this.$el.addEventListener('mouseleave', this._boundUpAction)
         }
       },
-
+      
       downAction(event) {
-        if (!this.frameCountCheck()) {
-          return
-        }
-
         if (this.handleMouseDown(event) === false) {
           return
         }
 
+        this._disposeTransHandler && this._disposeTransHandler()
+
         const boundingRect = this._boundingRect
 
-        // decide 'mousedown' or 'touchstart' x, y
+        // identify 'mousedown' or 'touchstart' x, y
         const downX = event.touches ? event.touches[0].pageX : event.clientX
         const downY = event.touches ? event.touches[0].pageY : event.clientY
 
-        let rippleX = round(downX - boundingRect.left)
-        let rippleY = round(downY - boundingRect.top)
+        let rippleX = ceil(downX - boundingRect.left)
+        let rippleY = ceil(downY - boundingRect.top)
 
-        // ripple max diameter
         let rippleTranslate = this._rippleTranslate = `translate(-50%, -50%) translate(${rippleX}px, ${rippleY}px)`
-        let rippleSize = this._rippleSize
+        // ripple diameter
+        let rippleSize = ceil(2.05 * furthestCornerDistanceFrom(rippleX, rippleY, boundingRect.width, boundingRect.height))
 
         this.showWave = false
-        
-        // this.waveStyle.opacity = this.opacity
-        this.waveStyle.backgroundColor = this.color
+
         this.waveStyle.width = `${rippleSize}px`
         this.waveStyle.height = `${rippleSize}px`
-        // this.waveStyle.transform = `${rippleTranslate} scale(${INITIAL_SCALE}, ${INITIAL_SCALE})`
+
+        this.$refs.ripple.dataset.ripplestate = RIPPLE_STATE_INIT
 
         Vue.nextTick(() => {
           this.animFrameHandler()
         })
       }
+    },
+
+    beforeDestroy() {
+      console.log('beforeDestroy')
     }
   }
 </script>
@@ -208,6 +209,7 @@
     position: relative
     overflow: hidden
 
+    // wave default style
     .wave
       pointer-events: none
       position: absolute
@@ -216,7 +218,11 @@
       width: 100%
       height: 100%
       border-radius: 50%
-
+    
+    // cubic-bezier(0, 0, 0.2, 1)
     .animating.spread-enter-active
-      transition: transform 0.6s cubic-bezier(0, 0, 0.2, 1), opacity 0.6s cubic-bezier(0, 0, 0.2, 1)
+      transition: transform .8s cubic-bezier(.157, .72, .386, .987), opacity .6s linear
+
+    .vanish.spread-leave-active
+      transition: opacity 0.4s linear
 </style>

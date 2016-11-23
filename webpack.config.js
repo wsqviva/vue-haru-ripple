@@ -67,11 +67,12 @@ switch(process.env.npm_lifecycle_event) {
           publicPath: '/example/',
           filename: '[name].js'
         },
-        devtool: 'eval-source-map',
-        devServer: {
-          historyApiFallback: true,
-          noInfo: true
-        }
+        devtool: 'eval-source-map'
+        // 不能与命令行共用?
+        // devServer: {
+        //   historyApiFallback: true,
+        //   noInfo: true
+        // }
       }
     );
     break;
