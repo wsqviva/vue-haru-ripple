@@ -29,7 +29,6 @@ $ yarn add vue-haru-ripple
 - [ ] add directive mode
 
 ## Maintainer
-This handsome guy is not only the maintainer, but also the owner. 👻
 
 | [![wsqviva](https://avatars2.githubusercontent.com/u/7554547?v=3&s=70)](https://github.com/wsqviva) |
 | --- |
