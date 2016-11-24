@@ -24,8 +24,9 @@ $ yarn add vue-haru-ripple
 ```
 
 ## TODO LIST
-- [ ] fix apparent bug
-- [ ] add directive
+- [ x ] upgrade to vue2
+- [ ] fix opacity problem
+- [ ] add directive mode
 
 ## Maintainer
 This handsome guy is not only the maintainer, but also the owner. 👻
