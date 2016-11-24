@@ -24,7 +24,7 @@ $ yarn add vue-haru-ripple
 ```
 
 ## TODO LIST
-- [ x ] upgrade to vue2
+- [x] upgrade to vue2
 - [ ] fix opacity problem
 - [ ] add directive mode
 
